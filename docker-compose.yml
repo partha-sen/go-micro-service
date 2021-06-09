@@ -11,9 +11,9 @@ services:
     authapi:
       build: ./GoAuthServer
       environment:
-         - SIGNING_KEY="${SIGNING_KEY}"
-         - DB_USER="${DB_USER}"
-         - DB_PWD="${DB_PWD}"
+         - SIGNING_KEY=${SIGNING_KEY}
+         - DB_USER=${DB_USER}
+         - DB_PWD=${DB_PWD}
       networks:
         - go_net
       ports:
@@ -21,9 +21,9 @@ services:
     appapi:
       build: ./GoAppService
       environment:
-         - SIGNING_KEY="${SIGNING_KEY}"
-         - DB_USER="${DB_USER}"
-         - DB_PWD="${DB_PWD}"
+         - SIGNING_KEY=${SIGNING_KEY}
+         - DB_USER=${DB_USER}
+         - DB_PWD=${DB_PWD}
       networks:
         - go_net
       ports:
