@@ -1,0 +1,33 @@
+version: '2'
+services:
+    ngproxy:
+      build: ./nginx
+      depends_on:
+         - authapi
+      networks:
+        - go_net
+      ports:
+       - "80:80"
+    authapi:
+      build: ./GoAuthServer
+      environment:
+         - SIGNING_KEY="${SIGNING_KEY}"
+         - DB_USER="${DB_USER}"
+         - DB_PWD="${DB_PWD}"
+      networks:
+        - go_net
+      ports:
+       - "8080"
+    appapi:
+      build: ./GoAppService
+      environment:
+         - SIGNING_KEY="${SIGNING_KEY}"
+         - DB_USER="${DB_USER}"
+         - DB_PWD="${DB_PWD}"
+      networks:
+        - go_net
+      ports:
+       - "8080"
+networks:
+  go_net:
+    driver: bridge
