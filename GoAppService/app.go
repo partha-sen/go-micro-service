@@ -20,14 +20,14 @@ func addRouter() {
 
 	interviewHandler := middleware.ValidateTokeMiddleware(
 		middleware.ValidateUserMiddleware(
-			controller.HandleOpening))
+			controller.HandleInterview))
 
 	http.HandleFunc("/interviews", interviewHandler)
 	http.HandleFunc("/interviews/", interviewHandler)
 
 	questionHandler := middleware.ValidateTokeMiddleware(
 		middleware.ValidateUserMiddleware(
-			controller.HandleOpening))
+			controller.HandleQuestion))
 
 	http.HandleFunc("/questions", questionHandler)
 	http.HandleFunc("/questions/", questionHandler)

@@ -50,7 +50,7 @@ func IsLoggedOut(jwtClaim model.JwtClaim) error {
 		return errors.Wrap(err, "Couldn't reach auth server")
 	}
 	if resp.StatusCode == http.StatusNotFound {
-		return errors.Wrap(err, "User is logged out")
+		return errors.New("User is logged out")
 	}
 	return nil
 }

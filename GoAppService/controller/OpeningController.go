@@ -17,7 +17,7 @@ func HandleOpening(w http.ResponseWriter, r *http.Request) {
 	jwtClaim := r.Context().Value(token.JWT_KEY).(model.JwtClaim)
 
 	if err := token.IsLoggedOut(jwtClaim); err != nil {
-		log.Println(err)
+		log.Println("IsLoggedOut ", err)
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
