@@ -32,6 +32,6 @@ func RemoveExpiredToken() {
 			delete(GlobalTokenStore, key)
 		}
 	}
-	time.Sleep(config.TIME_INTERVAL * time.Second)
+	time.Sleep(config.TIME_INTERVAL * time.Minute)
 	RemoveExpiredToken()
 }

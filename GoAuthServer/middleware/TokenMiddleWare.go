@@ -1,17 +1,22 @@
 package middleware
 
 import (
+	"context"
 	"log"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
+	"learning.go/authserver/model"
 	"learning.go/authserver/token"
 )
 
-func setHedder(r *http.Request, claims jwt.MapClaims) {
-	r.Header.Add("USER_NAMR", claims["user_name"].(string))
-	r.Header.Add("USER_ROLE", claims["authorities"].(string))
-	r.Header.Add("TOKEN_ID", claims["jti"].(string))
+func getJwtClaim(claims jwt.MapClaims) model.JwtClaim {
+
+	var jwtClaim model.JwtClaim
+	jwtClaim.UserName = claims["user_name"].(string)
+	jwtClaim.Authorities = claims["authorities"].(string)
+	jwtClaim.JTI = claims["jti"].(string)
+	return jwtClaim
 }
 
 func ValidateTokeMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -25,7 +30,8 @@ func ValidateTokeMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				log.Println("Couldn't retrieve role from Token")
 				w.WriteHeader(http.StatusBadRequest)
 			}
-			setHedder(r, claims)
+			ctx := context.WithValue(r.Context(), "JWT_CLAIM", getJwtClaim(claims))
+			r = r.WithContext(ctx)
 			next(w, r)
 		}
 	})
