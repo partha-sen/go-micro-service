@@ -1,26 +1,16 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
 	"learning.go/appservice/model"
 	"learning.go/appservice/service"
-	"learning.go/appservice/token"
 )
 
 func HandleQuestion(w http.ResponseWriter, r *http.Request) {
 
 	strId := strings.TrimPrefix(r.URL.Path, "/questions")
-
-	jwtClaim := r.Context().Value(token.JWT_KEY).(model.JwtClaim)
-
-	if err := token.IsLoggedOut(jwtClaim); err != nil {
-		log.Println("IsLoggedOut ", err)
-		w.WriteHeader(http.StatusForbidden)
-		return
-	}
 
 	switch r.Method {
 

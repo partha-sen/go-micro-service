@@ -21,9 +21,9 @@ func getJwtClaim(claims jwt.MapClaims) model.JwtClaim {
 	return jwtClaim
 }
 
-func ValidateAdminMiddleware(next http.HandlerFunc) http.HandlerFunc {
+func checkAdminAccess(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Calling ValidateAdminMiddleware..")
+		log.Println("Calling checkAdminAccess..")
 		jwtClaim := r.Context().Value(token.JWT_KEY).(model.JwtClaim)
 		if !strings.Contains(jwtClaim.Authorities, "ADMIN") {
 			log.Println("Don't have ADMIN privilege")
@@ -35,9 +35,9 @@ func ValidateAdminMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 }
 
-func ValidateUserMiddleware(next http.HandlerFunc) http.HandlerFunc {
+func checkUserAccess(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Calling ValidateAdminMiddleware..")
+		log.Println("Calling checkUserAccess..")
 		jwtClaim := r.Context().Value(token.JWT_KEY).(model.JwtClaim)
 		if !strings.Contains(jwtClaim.Authorities, "USER") {
 			log.Println("Don't have USER privilege")
@@ -49,10 +49,10 @@ func ValidateUserMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 }
 
-func ValidateTokeMiddleware(next http.HandlerFunc) http.HandlerFunc {
+func checkToke(next http.HandlerFunc) http.HandlerFunc {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Calling ValidateTokeMiddleware..")
+		log.Println("Calling checkToke..")
 
 		jwtToken, err := token.GetToken(r)
 
@@ -73,6 +73,20 @@ func ValidateTokeMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		log.Println("claims ", claims)
 		ctx := context.WithValue(r.Context(), token.JWT_KEY, getJwtClaim(claims))
 		r = r.WithContext(ctx)
+		next(w, r)
+	})
+}
+
+func checkLoginStatus(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Calling checkLoginStatus..")
+		jwtClaim := r.Context().Value(token.JWT_KEY).(model.JwtClaim)
+
+		if err := token.IsLoggedOut(jwtClaim); err != nil {
+			log.Println("Login status check failed", err)
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
 		next(w, r)
 	})
 }

@@ -11,26 +11,14 @@ import (
 
 func addRouter() {
 
-	openingHandler := middleware.ValidateTokeMiddleware(
-		middleware.ValidateAdminMiddleware(
-			controller.HandleOpening))
+	http.HandleFunc("/openings", middleware.ValidateTokenAdminAccess(controller.HandleOpening))
+	http.HandleFunc("/openings/", middleware.ValidateTokenAdminAccess(controller.HandleOpening))
 
-	http.HandleFunc("/openings", openingHandler)
-	http.HandleFunc("/openings/", openingHandler)
+	http.HandleFunc("/interviews", middleware.ValidateTokenUserAccess(controller.HandleInterview))
+	http.HandleFunc("/interviews/", middleware.ValidateTokenUserAccess(controller.HandleInterview))
 
-	interviewHandler := middleware.ValidateTokeMiddleware(
-		middleware.ValidateUserMiddleware(
-			controller.HandleInterview))
-
-	http.HandleFunc("/interviews", interviewHandler)
-	http.HandleFunc("/interviews/", interviewHandler)
-
-	questionHandler := middleware.ValidateTokeMiddleware(
-		middleware.ValidateUserMiddleware(
-			controller.HandleQuestion))
-
-	http.HandleFunc("/questions", questionHandler)
-	http.HandleFunc("/questions/", questionHandler)
+	http.HandleFunc("/questions", middleware.ValidateTokenUserAccess(controller.HandleQuestion))
+	http.HandleFunc("/questions/", middleware.ValidateTokenUserAccess(controller.HandleQuestion))
 }
 
 func main() {
